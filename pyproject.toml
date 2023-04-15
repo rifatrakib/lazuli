@@ -1,0 +1,63 @@
+[tool.poetry]
+name = "lazuli"
+version = "0.1.0"
+description = "Python crawler that crawls product pages and scrapes required information"
+authors = ["rifatrakib <Rakib.1508@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^1.10.7"
+Scrapy = "^2.8.0"
+pandas = "^2.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.2.2"
+black = "^23.3.0"
+flake8 = "^6.0.0"
+isort = "^5.12.0"
+ruff = "^0.0.261"
+
+[tool.poetry.group.dev.dependencies]
+boto3 = "^1.26.74"
+
+[tool.black]
+line-length = 140
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+| \.hg
+| \.mypy_cache
+| \.tox
+| \.venv
+| _build
+| buck-out
+| build
+)/
+'''
+
+[tool.flake8]
+max-line-length = 140
+exclude = [".git", "__pycache__", "dist"]
+max-complexity = 10
+
+[tool.isort]
+atomic = true
+profile = "black"
+line_length = 140
+skip_gitignore = true
+
+[tool.ruff]
+line-length = 140
+exclude = [".git", "__pycache__", "dist"]
+target-version = "py39"
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
