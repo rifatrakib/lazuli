@@ -62,9 +62,12 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "adidas.pipelines.AdidasPipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "adidas.pipelines.CSVPipeline": 100,
+    "adidas.pipelines.JSONPipeline": 200,
+    "adidas.pipelines.JSONLinesPipeline": 300,
+    "adidas.pipelines.MongoDBPipeline": 400,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -91,3 +94,6 @@ ROBOTSTXT_OBEY = True
 REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
+
+MONGO_URI = "mongodb://localhost:27017/"
+MONGO_DATABASE = "adidas"
