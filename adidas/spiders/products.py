@@ -33,4 +33,4 @@ class ProductsSpider(scrapy.Spider):
 
     def parse_products(self, response, **kwargs):
         data = response.json()
-        yield {**data, **kwargs}
+        yield {**data, "product_metadata": kwargs}
