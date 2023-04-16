@@ -1,8 +1,8 @@
 import scrapy
 
 
-class ShopSpider(scrapy.Spider):
-    name = "shop"
+class ProductsSpider(scrapy.Spider):
+    name = "products"
     allowed_domains = ["shop.adidas.jp"]
     catalogue_url_base = "https://shop.adidas.jp/f/v1/pub/product"
     product_url_base = "https://shop.adidas.jp/f/v2/web/pub/products/article"
