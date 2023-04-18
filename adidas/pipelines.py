@@ -54,7 +54,7 @@ class JSONPipeline:
         Path(location).mkdir(parents=True, exist_ok=True)
 
         self.filename = f"{spider.name}-{scraping_date}.json"
-        self.file = open(f"{location}/{self.filename}", "w")
+        self.file = open(f"{location}/{self.filename}", "w", encoding="utf-8")
         header = "[\n"
         self.file.write(header)
 
@@ -63,18 +63,18 @@ class JSONPipeline:
         self.file.write(footer)
         self.file.close()
 
-        with open(f"data/json/{self.filename}", "r") as reader:
+        with open(f"data/json/{self.filename}", "r", encoding="utf-8") as reader:
             data = reader.read()
 
         data = data.rpartition(",")
         data = data[0] + data[-1]
         data = json.loads(data)
-        with open(f"data/json/{self.filename}", "w") as writer:
-            writer.write(json.dumps(data, indent=4))
+        with open(f"data/json/{self.filename}", "w", encoding="utf-8") as writer:
+            writer.write(json.dumps(data, indent=4, ensure_ascii=False))
 
     def process_item(self, item, spider):
         data = ItemAdapter(item).asdict()
-        line = json.dumps(data, indent=4) + ",\n"
+        line = json.dumps(data, indent=4, ensure_ascii=False) + ",\n"
         self.file.write(line)
         return item
 
@@ -93,13 +93,13 @@ class JSONLinesPipeline:
         Path(location).mkdir(parents=True, exist_ok=True)
 
         self.filename = f"{spider.name}-{scraping_date}.jl"
-        self.file = open(f"{location}/{self.filename}", "w")
+        self.file = open(f"{location}/{self.filename}", "w", encoding="utf-8")
 
     def spider_closed(self, spider):
         self.file.close()
 
     def process_item(self, item, spider):
-        line = json.dumps(ItemAdapter(item).asdict()) + "\n"
+        line = json.dumps(ItemAdapter(item).asdict(), ensure_ascii=False) + "\n"
         self.file.write(line)
         return item
 
