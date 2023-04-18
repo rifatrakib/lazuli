@@ -35,6 +35,7 @@ class ProductsSpider(scrapy.Spider):
                 f"{self.product_page_base}/{product_code}/",
                 callback=self.parse_product_page,
                 cb_kwargs=information,
+                dont_filter=True,
             )
 
     def parse_product_page(self, response, **kwargs):
@@ -64,6 +65,7 @@ class ProductsSpider(scrapy.Spider):
             f"{self.product_api_base}/{kwargs['article']}/",
             callback=self.parse_product_api,
             cb_kwargs={"product_stat": kwargs, "product_data": data},
+            dont_filter=True,
         )
 
     def parse_product_api(self, response, **kwargs):
@@ -72,6 +74,7 @@ class ProductsSpider(scrapy.Spider):
             f"{self.size_chart_url_base}/{kwargs['product_stat']['model_code']}/",
             callback=self.parse_size_charts,
             cb_kwargs={**kwargs, "api_info": data},
+            dont_filter=True,
         )
 
     def parse_size_charts(self, response, **kwargs):
