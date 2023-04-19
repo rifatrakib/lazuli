@@ -63,10 +63,7 @@ ROBOTSTXT_OBEY = True
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    # "adidas.pipelines.CSVPipeline": 100,
-    "adidas.pipelines.JSONPipeline": 200,
-    "adidas.pipelines.JSONLinesPipeline": 300,
-    # "adidas.pipelines.MongoDBPipeline": 400,
+    "adidas.pipelines.AdidasPipeline": 100,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

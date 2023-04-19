@@ -10,7 +10,7 @@ python = "^3.9"
 pydantic = "^1.10.7"
 Scrapy = "^2.8.0"
 pandas = "^2.0.0"
-pymongo = "^4.3.3"
+xlsxwriter = "^3.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.2.2"

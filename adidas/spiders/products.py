@@ -5,7 +5,7 @@ import scrapy
 from scrapy.selector import Selector
 from w3lib.html import remove_tags
 
-from services.preprocess import sanitize_size_chart_data
+from adidas.preprocessors import sanitize_size_chart_data
 
 
 class ProductsSpider(scrapy.Spider):

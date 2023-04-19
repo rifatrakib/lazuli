@@ -1,9 +1,26 @@
-import json
-
-from services.models import CoordinatedProduct, ProductInformation, ProductReview, ProductTechnology
+from adidas.items import CoordinatedProduct, ProductInformation, ProductReview, ProductTechnology
 
 
-def process_single_product(product):
+def sanitize_size_chart_data(data):
+    data = data["size_chart"]["0"]
+    headers = data["header"]["0"]
+    body = list(data["body"].values())
+
+    result = []
+    for size_data in body:
+        item = {}
+        for k, v in size_data.items():
+            if k in headers:
+                if headers[k]["value"] == "":
+                    item["表示サイズ"] = v["value"]
+                else:
+                    item[headers[k]["value"]] = v["value"].replace("cm", "")
+        result.append(item)
+
+    return result
+
+
+def process_product_information(product):
     processed_data = {
         "product_id": product["product_stat"]["article"],
         "product_name": product["product_data"]["name"],
@@ -31,15 +48,6 @@ def process_single_product(product):
     return processed_data.dict()
 
 
-def prepare_products(data):
-    processed_data = []
-    for product in data:
-        processed_data.append(process_single_product(product))
-
-    with open("processed_data.json", "w", encoding="utf-8") as writer:
-        writer.write(json.dumps(processed_data, indent=4, ensure_ascii=False))
-
-
 def process_product_coordinates(product):
     result = []
     for coordinated_product in product["api_info"]["product"]["article"]["coordinates"]["articles"]:
@@ -57,16 +65,6 @@ def process_product_coordinates(product):
     return result
 
 
-def prepare_product_coordinates(products):
-    processed_data = []
-    for product in products:
-        if product["api_info"]["product"]["article"]["coordinates"]:
-            processed_data.extend(process_product_coordinates(product))
-
-    with open("processed_product_coordinates.json", "w", encoding="utf-8") as writer:
-        writer.write(json.dumps(processed_data, indent=4, ensure_ascii=False))
-
-
 def process_product_sizes(product):
     product_choices = []
     sizes = product["size_chart"]
@@ -79,18 +77,6 @@ def process_product_sizes(product):
             }
         )
     return product_choices
-
-
-def prepare_product_sizes(products):
-    processed_data = []
-    for product in products:
-        size_data = process_product_sizes(product)
-        if not size_data:
-            continue
-        processed_data.extend(size_data)
-
-    with open("processed_size.json", "w", encoding="utf-8") as writer:
-        writer.write(json.dumps(processed_data, indent=4, ensure_ascii=False))
 
 
 def process_product_technologies(product):
@@ -108,16 +94,6 @@ def process_product_technologies(product):
     return result
 
 
-def process_special_functions(products):
-    processed_data = []
-    for product in products:
-        if product["api_info"]["product"]["model"]["description"]["technology"]:
-            processed_data.extend(process_product_technologies(product))
-
-    with open("processed_technologies.json", "w", encoding="utf-8") as writer:
-        writer.write(json.dumps(processed_data, indent=4, ensure_ascii=False))
-
-
 def process_product_reviews(product):
     product_reviews = []
     for review in product["review_data"]["reviews"]:
@@ -129,13 +105,3 @@ def process_product_reviews(product):
             ).dict(),
         )
     return product_reviews
-
-
-def prepare_product_reviews(products):
-    processed_data = []
-    for product in products:
-        if product["review_data"]:
-            processed_data.extend(process_product_reviews(product))
-
-    with open("processed_reviews.json", "w", encoding="utf-8") as writer:
-        writer.write(json.dumps(processed_data, indent=4, ensure_ascii=False))
