@@ -88,6 +88,7 @@ class ProductsSpider(scrapy.Spider):
                 f"{self.reviews_url_base.replace('<model>', model_code)}?{params}",
                 callback=self.parse_reviews,
                 cb_kwargs={**kwargs, "size_chart": data},
+                dont_filter=True,
             )
         else:
             yield {**kwargs, "size_chart": data, "review_data": {}}
@@ -163,6 +164,7 @@ class ProductsSpider(scrapy.Spider):
                 f"{self.reviews_url_base.replace('<model>', model_code)}?{params}",
                 callback=self.parse_reviews,
                 cb_kwargs={**kwargs, "review_data": review_data},
+                dont_filter=True,
             )
         else:
             yield {**kwargs, "review_data": review_data}
