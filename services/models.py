@@ -12,7 +12,7 @@ class ProductInformation(BaseModel):
     available_sizes: str
     breadcrumb: str
     sense_of_fit: Union[str, None] = None
-    title_of_description: str
+    title_of_description: Union[str, None] = None
     product_description: str
     itemization_description: str
     keywords: str
