@@ -81,8 +81,7 @@ class ProductsSpider(scrapy.Spider):
 
     def parse_size_charts(self, response, **kwargs):
         data = response.json()
-        if data["size_chart"]:
-            data = sanitize_size_chart_data(data)
+        data = sanitize_size_chart_data(data) if data["size_chart"] else []
 
         if kwargs["product_stat"]["review_count"] > 0:
             item = kwargs["product_stat"]["article"]
