@@ -4,7 +4,12 @@ from typing import Union
 from pydantic import BaseModel, HttpUrl, validator
 
 
-class ProductInformation(BaseModel):
+class ProductCore(BaseModel):
+    class Config:
+        anystr_strip_whitespace = True
+
+
+class ProductInformation(ProductCore):
     product_id: str
     product_name: str
     product_url: HttpUrl
@@ -49,7 +54,7 @@ class ProductInformation(BaseModel):
         return None
 
 
-class CoordinatedProduct(BaseModel):
+class CoordinatedProduct(ProductCore):
     main_product_id: str
     main_product_name: str
     coordinated_product_number: str
@@ -71,7 +76,7 @@ class CoordinatedProduct(BaseModel):
         return f"https://shop.adidas.jp{v}"
 
 
-class ProductTechnology(BaseModel):
+class ProductTechnology(ProductCore):
     product_id: str
     product_name: str
     technology_name: str
@@ -83,7 +88,7 @@ class ProductTechnology(BaseModel):
         return f"https://shop.adidas.jp{v}"
 
 
-class ProductReview(BaseModel):
+class ProductReview(ProductCore):
     product_id: str
     product_name: str
     review_date: str
