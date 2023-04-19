@@ -1,10 +1,6 @@
 import json
 
-with open("data/json/products-2023-04-19.json", encoding="utf-8") as reader:
-    products = json.loads(reader.read())
-
-with open("sample.json", "w", encoding="utf-8") as writer:
-    writer.write(json.dumps(products[:50], indent=4, ensure_ascii=False))
+from services.models import CoordinatedProduct, ProductInformation, ProductReview, ProductTechnology
 
 
 def process_single_product(product):
@@ -13,15 +9,13 @@ def process_single_product(product):
         "product_name": product["product_data"]["name"],
         "product_url": product["product_data"]["url"],
         "product_category": product["product_data"]["category"],
-        "available_sizes": ", ".join(product["product_data"]["available_sizes"]),
+        "available_sizes": product["product_data"]["available_sizes"],
         "breadcrumb": product["product_data"]["breadcrumb"],
         "sense_of_fit": product["product_data"]["sense_of_fit"],
         "title_of_description": product["product_data"]["title_of_description"],
         "product_description": product["api_info"]["product"]["article"]["description"]["messages"]["mainText"],
-        "itemization_description": "\n".join(
-            [f"- {text}" for text in product["product_data"]["itemization_description"]]
-        ),
-        "keywords": ", ".join([item["label"] for item in product["api_info"]["page"]["categories"]]),
+        "itemization_description": product["product_data"]["itemization_description"],
+        "keywords": product["api_info"]["page"]["categories"],
     }
 
     if product["review_data"]:
@@ -32,16 +26,9 @@ def process_single_product(product):
         processed_data["appropriation_of_length_rate"] = product["review_data"]["appropriation_of_length_rate"]
         processed_data["material_quality_rate"] = product["review_data"]["material_quality_rate"]
         processed_data["comfort_rate"] = product["review_data"]["comfort_rate"]
-    else:
-        processed_data["product_rating"] = None
-        processed_data["number_of_reviews"] = None
-        processed_data["recommended_rate"] = None
-        processed_data["sense_of_fit_rate"] = None
-        processed_data["appropriation_of_length_rate"] = None
-        processed_data["material_quality_rate"] = None
-        processed_data["comfort_rate"] = None
 
-    return processed_data
+    processed_data = ProductInformation(**processed_data)
+    return processed_data.dict()
 
 
 def prepare_products(data):
@@ -57,15 +44,15 @@ def process_product_coordinates(product):
     result = []
     for coordinated_product in product["api_info"]["product"]["article"]["coordinates"]["articles"]:
         result.append(
-            {
-                "main_product_id": product["product_stat"]["article"],
-                "main_product_name": product["product_data"]["name"],
-                "coordinated_product_number": coordinated_product["articleCode"],
-                "coordinated_product_name": coordinated_product["name"],
-                "coordinated_product_price": coordinated_product["price"]["current"]["withTax"],
-                "coordinated_product_page_url": coordinated_product["name"],
-                "coordinated_product_image_url": coordinated_product["articleCode"],
-            }
+            CoordinatedProduct(
+                main_product_id=product["product_stat"]["article"],
+                main_product_name=product["product_data"]["name"],
+                coordinated_product_number=coordinated_product["articleCode"],
+                coordinated_product_name=coordinated_product["name"],
+                coordinated_product_price=coordinated_product["price"]["current"]["withTax"],
+                coordinated_product_page_url=coordinated_product["articleCode"],
+                coordinated_product_image_url=coordinated_product["image"],
+            ).dict(),
         )
     return result
 
@@ -110,13 +97,13 @@ def process_product_technologies(product):
     result = []
     for tech in product["api_info"]["product"]["model"]["description"]["technology"]:
         result.append(
-            {
-                "product_id": product["product_stat"]["article"],
-                "product_name": product["product_data"]["name"],
-                "technology_name": tech["name"],
-                "description": tech["text"],
-                "image": tech["imagePath"],
-            }
+            ProductTechnology(
+                product_id=product["product_stat"]["article"],
+                product_name=product["product_data"]["name"],
+                technology_name=tech["name"],
+                description=tech["text"],
+                image_url=tech["imagePath"],
+            ).dict(),
         )
     return result
 
@@ -135,11 +122,11 @@ def process_product_reviews(product):
     product_reviews = []
     for review in product["review_data"]["reviews"]:
         product_reviews.append(
-            {
-                "product_id": product["product_stat"]["article"],
-                "product_name": product["product_data"]["name"],
+            ProductReview(
+                product_id=product["product_stat"]["article"],
+                product_name=product["product_data"]["name"],
                 **review,
-            }
+            ).dict(),
         )
     return product_reviews
 
@@ -152,13 +139,3 @@ def prepare_product_reviews(products):
 
     with open("processed_reviews.json", "w", encoding="utf-8") as writer:
         writer.write(json.dumps(processed_data, indent=4, ensure_ascii=False))
-
-
-with open("sample.json", encoding="utf-8") as reader:
-    products = json.loads(reader.read())
-
-prepare_products(products)
-prepare_product_coordinates(products)
-prepare_product_sizes(products)
-process_special_functions(products)
-prepare_product_reviews(products)
