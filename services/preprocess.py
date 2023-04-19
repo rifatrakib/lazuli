@@ -5,11 +5,11 @@ def sanitize_size_chart_data(data):
 
     result = []
     for size_data in body:
-        item = {headers[k]["value"]: v["value"] for k, v in headers.items()}
+        item = {}
         for k, v in size_data.items():
-            k = "size" if k == "" else k
             if k in headers:
-                item[headers[k]["value"]] = v["value"]
+                k = "size" if headers[k]["value"] == "" else k
+                item[k] = v["value"]
         result.append(item)
 
     return result
