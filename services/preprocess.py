@@ -8,8 +8,10 @@ def sanitize_size_chart_data(data):
         item = {}
         for k, v in size_data.items():
             if k in headers:
-                k = "size" if headers[k]["value"] == "" else k
-                item[k] = v["value"]
+                if headers[k]["value"] == "":
+                    item["表示サイズ"] = v["value"]
+                else:
+                    item[headers[k]["value"]] = v["value"].replace("cm", "")
         result.append(item)
 
     return result
