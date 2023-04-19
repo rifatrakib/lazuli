@@ -12,6 +12,7 @@ from adidas.preprocessors import (
     process_product_sizes,
     process_product_technologies,
 )
+from adidas.transformers import generate_product_spreadsheet
 
 
 class AdidasPipeline:
@@ -24,10 +25,10 @@ class AdidasPipeline:
 
     def spider_opened(self, spider):
         scraping_date = datetime.utcnow().date().isoformat()
-        location = f"data/jsonline/{scraping_date}"
+        location = f"data/jsonlines/{scraping_date}"
         Path(location).mkdir(parents=True, exist_ok=True)
 
-        self.product_information_filename = "product-info.jl"
+        self.product_information_filename = "product-information.jl"
         self.product_information_file = open(f"{location}/{self.product_information_filename}", "w", encoding="utf-8")
 
         self.product_coordinates_filename = "product-coordinates.jl"
@@ -36,10 +37,10 @@ class AdidasPipeline:
         self.product_size_filename = "product-sizes.jl"
         self.product_size_file = open(f"{location}/{self.product_size_filename}", "w", encoding="utf-8")
 
-        self.product_technology_filename = "product-technology.jl"
+        self.product_technology_filename = "product-technologies.jl"
         self.product_technology_file = open(f"{location}/{self.product_technology_filename}", "w", encoding="utf-8")
 
-        self.product_review_filename = "product-review.jl"
+        self.product_review_filename = "product-reviews.jl"
         self.product_review_file = open(f"{location}/{self.product_review_filename}", "w", encoding="utf-8")
 
     def spider_closed(self, spider):
@@ -48,6 +49,7 @@ class AdidasPipeline:
         self.product_size_file.close()
         self.product_technology_file.close()
         self.product_review_file.close()
+        generate_product_spreadsheet()
 
     def process_item(self, item, spider):
         product = ItemAdapter(item).asdict()
@@ -80,4 +82,4 @@ class AdidasPipeline:
                 product_review = json.dumps(product_review, ensure_ascii=False) + "\n"
                 self.product_review_file.write(product_review)
 
-        return item
+        return f"Product from {product['product_data']['url']} scraped successfully."
