@@ -5,6 +5,8 @@ import scrapy
 from scrapy.selector import Selector
 from w3lib.html import remove_tags
 
+from services.preprocess import sanitize_size_chart_data
+
 
 class ProductsSpider(scrapy.Spider):
     name = "products"
@@ -79,6 +81,8 @@ class ProductsSpider(scrapy.Spider):
 
     def parse_size_charts(self, response, **kwargs):
         data = response.json()
+        if data["size_chart"]:
+            data = sanitize_size_chart_data(data)
 
         if kwargs["product_stat"]["review_count"] > 0:
             item = kwargs["product_stat"]["article"]
