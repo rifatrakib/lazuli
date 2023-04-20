@@ -7,14 +7,53 @@ from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl.utils import get_column_letter
 
 
-def format_sheet_views(writer, sheet_name, number_of_columns):
+def column_width_definitions():
+    return {
+        "product-information": [
+            11,
+            31,
+            22,
+            19.29,
+            22.29,
+            23.14,
+            12.71,
+            24.57,
+            57.43,
+            57.43,
+            28.86,
+            16.14,
+            20.86,
+            21.14,
+            18,
+            30.86,
+            22.71,
+            14.43,
+        ],
+        "product-coordinates": [15.43, 21.43, 30.29, 30.29, 27.86, 22.14, 56.43],
+        "product-sizes": [11, 31, 13.5],
+        "product-technologies": [11, 31, 19.14, 55, 55],
+        "product-reviews": [11, 31, 13.57, 15.29, 29.29, 64, 19.57],
+    }
+
+
+def format_sheet_views(writer, sheet_name, number_of_columns, column_widths):
     worksheet = writer.sheets[sheet_name]
     worksheet.freeze_panes = worksheet["A4"]
 
     for col in range(1, number_of_columns + 2):
         column_letter = get_column_letter(col)
         column_dimensions = worksheet.column_dimensions[column_letter]
-        column_dimensions.width = 30 if col > 1 else 2.71
+        if sheet_name != "Sizes":
+            column_dimensions.width = column_widths[col - 2] if col > 1 else 2.71
+        else:
+            if col == 1:
+                column_dimensions.width = 2.71
+            elif col == 2:
+                column_dimensions.width = column_widths[0]
+            elif col == 3:
+                column_dimensions.width = column_widths[1]
+            else:
+                column_dimensions.width = column_widths[2]
 
         for cell in worksheet[column_letter]:
             if cell.row != 1:
@@ -53,6 +92,7 @@ def generate_product_spreadsheet():
     Path(destination).mkdir(parents=True, exist_ok=True)
     writer = pd.ExcelWriter(f"{destination}/2023-04-19.xlsx", engine="openpyxl")
 
+    widths = column_width_definitions()
     sheets = {
         "product-information": "Product Information",
         "product-coordinates": "Coordinated Products",
@@ -64,10 +104,11 @@ def generate_product_spreadsheet():
     for filename, sheet_name in sheets.items():
         source = f"data/jsonlines/2023-04-19/{filename}.jl"
         df = pd.read_json(source, lines=True)
-        number_of_columns = len(df.columns)
         df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=2, startcol=1)
+
+        # apply styles to excel sheet
         format_column_headers(writer, sheet_name)
         add_sheet_title(writer, sheet_name)
-        format_sheet_views(writer, sheet_name, number_of_columns)
+        format_sheet_views(writer, sheet_name, len(df.columns), widths[filename])
 
     writer.close()

@@ -14,7 +14,7 @@ def sanitize_size_chart_data(data):
                 if headers[k]["value"] == "":
                     item["表示サイズ"] = v["value"]
                 else:
-                    item[headers[k]["value"]] = v["value"].replace("cm", "")
+                    item[headers[k]["value"]] = v["value"]
         result.append(item)
 
     return result
