@@ -9,6 +9,7 @@ from openpyxl.utils import get_column_letter
 
 def hyperlink_columns(name):
     data = {
+        "table-of-contents": [1],
         "product-information": [3],
         "product-coordinates": [5, 6],
         "product-sizes": [],
@@ -20,6 +21,7 @@ def hyperlink_columns(name):
 
 def column_width_definitions(name):
     data = {
+        "table-of-contents": [12.5, 30],
         "product-information": [
             11,
             31,
@@ -75,7 +77,10 @@ def format_sheet_views(writer, sheet_name, number_of_columns, name):
             if cell.row != 1:
                 cell.alignment = Alignment(wrap_text=True, vertical="top")
             if cell.row > 3 and cell.column - 2 in hyperlinks:
-                cell.hyperlink = cell.value
+                if name == "table-of-contents":
+                    cell.value = f'=HYPERLINK("#\'{cell.value}\'!A1", "{cell.value}")'
+                else:
+                    cell.hyperlink = cell.value
                 cell.font = Font(underline="single", color="0563C1")
 
 
@@ -105,6 +110,14 @@ def format_column_headers(writer, sheet_name: str):
         cell.border = header_border
 
 
+def create_contents_table_data(sheets):
+    data = []
+    for index, (key, sheet) in enumerate(sheets.items()):
+        if key != "table-of-contents":
+            data.append({"sheet_index": index, "sheet_name": sheet})
+    return pd.DataFrame(data)
+
+
 def generate_product_spreadsheet():
     current_date = datetime.utcnow().date().isoformat()
     destination = "data/spreadsheets"
@@ -112,6 +125,7 @@ def generate_product_spreadsheet():
     writer = pd.ExcelWriter(f"{destination}/{current_date}.xlsx", engine="openpyxl")
 
     sheets = {
+        "table-of-contents": "Table of Contents",
         "product-information": "Product Information",
         "product-coordinates": "Coordinated Products",
         "product-sizes": "Sizes",
@@ -121,7 +135,11 @@ def generate_product_spreadsheet():
 
     for filename, sheet_name in sheets.items():
         source = f"data/jsonlines/{current_date}/{filename}.jl"
-        df = pd.read_json(source, lines=True)
+        if filename == "table-of-contents":
+            df = create_contents_table_data(sheets)
+        else:
+            df = pd.read_json(source, lines=True)
+
         df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=2, startcol=1)
 
         # apply styles to excel sheet
