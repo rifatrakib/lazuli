@@ -2,7 +2,15 @@
 from pathlib import Path
 
 import pandas as pd
+import pydash
 from openpyxl.styles import Alignment, Border, Font, Side
+
+
+def add_sheet_title(writer, sheet_name):
+    worksheet = writer.sheets[sheet_name]
+    cell = worksheet.cell(row=1, column=2)
+    cell.value = f"{sheet_name} Table"
+    cell.font = Font(color="002060", size=14, bold=True)
 
 
 def format_column_headers(writer, sheet_name: str):
@@ -18,6 +26,7 @@ def format_column_headers(writer, sheet_name: str):
             continue
 
         cell = worksheet.cell(row=3, column=col_idx + 1)
+        cell.value = pydash.human_case(cell.value).title()
         cell.font = header_font
         cell.alignment = header_alignment
         cell.border = header_border
@@ -43,6 +52,7 @@ def generate_product_spreadsheet():
         df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=2, startcol=1)
         workbook = writer.book
         format_column_headers(writer, sheet_name)
+        add_sheet_title(writer, sheet_name)
         workbook.save(f"{destination}/2023-04-19.xlsx")
 
     writer.close()
