@@ -7,8 +7,19 @@ from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl.utils import get_column_letter
 
 
-def column_width_definitions():
-    return {
+def hyperlink_columns(name):
+    data = {
+        "product-information": [2],
+        "product-coordinates": [5, 6],
+        "product-sizes": [],
+        "product-technologies": [4],
+        "product-reviews": [],
+    }
+    return data[name]
+
+
+def column_width_definitions(name):
+    data = {
         "product-information": [
             11,
             31,
@@ -34,9 +45,13 @@ def column_width_definitions():
         "product-technologies": [11, 31, 19.14, 55, 55],
         "product-reviews": [11, 31, 13.57, 15.29, 29.29, 64, 19.57],
     }
+    return data[name]
 
 
-def format_sheet_views(writer, sheet_name, number_of_columns, column_widths):
+def format_sheet_views(writer, sheet_name, number_of_columns, name):
+    column_widths = column_width_definitions(name)
+    hyperlinks = hyperlink_columns(name)
+
     worksheet = writer.sheets[sheet_name]
     worksheet.freeze_panes = worksheet["A4"]
 
@@ -58,6 +73,9 @@ def format_sheet_views(writer, sheet_name, number_of_columns, column_widths):
         for cell in worksheet[column_letter]:
             if cell.row != 1:
                 cell.alignment = Alignment(wrap_text=True, vertical="top")
+            if cell.row > 3 and cell.column - 2 in hyperlinks:
+                cell.hyperlink = cell.value
+                cell.font = Font(underline="single", color="0563C1")
 
 
 def add_sheet_title(writer, sheet_name):
@@ -92,7 +110,6 @@ def generate_product_spreadsheet():
     Path(destination).mkdir(parents=True, exist_ok=True)
     writer = pd.ExcelWriter(f"{destination}/2023-04-19.xlsx", engine="openpyxl")
 
-    widths = column_width_definitions()
     sheets = {
         "product-information": "Product Information",
         "product-coordinates": "Coordinated Products",
@@ -109,6 +126,6 @@ def generate_product_spreadsheet():
         # apply styles to excel sheet
         format_column_headers(writer, sheet_name)
         add_sheet_title(writer, sheet_name)
-        format_sheet_views(writer, sheet_name, len(df.columns), widths[filename])
+        format_sheet_views(writer, sheet_name, len(df.columns), filename)
 
     writer.close()
