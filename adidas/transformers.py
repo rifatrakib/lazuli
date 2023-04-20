@@ -3,7 +3,15 @@ from pathlib import Path
 
 import pandas as pd
 import pydash
-from openpyxl.styles import Alignment, Border, Font, Side
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+
+
+def format_sheet_background(writer, sheet_name):
+    worksheet = writer.sheets[sheet_name]
+    ws_fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type="solid")
+    for row in worksheet.rows:
+        for cell in row:
+            cell.fill = ws_fill
 
 
 def add_sheet_title(writer, sheet_name):
@@ -21,7 +29,7 @@ def format_column_headers(writer, sheet_name: str):
     header_alignment = Alignment(horizontal="left")
     header_border = Border(bottom=Side(border_style="medium", color="002060"))
 
-    for col_idx, _ in enumerate(worksheet.columns):
+    for col_idx, column in enumerate(worksheet.columns):
         if col_idx == 0:
             continue
 
@@ -50,9 +58,8 @@ def generate_product_spreadsheet():
         source = f"data/jsonlines/2023-04-19/{filename}.jl"
         df = pd.read_json(source, lines=True)
         df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=2, startcol=1)
-        workbook = writer.book
         format_column_headers(writer, sheet_name)
         add_sheet_title(writer, sheet_name)
-        workbook.save(f"{destination}/2023-04-19.xlsx")
+        format_sheet_background(writer, sheet_name)
 
     writer.close()
