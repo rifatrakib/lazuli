@@ -3,6 +3,7 @@ breadcrumb(Category) = response.css("div.breadcrumb_wrap > ul > li.breadcrumbLis
 image and videos url = from product_url API (response["product"]["article"]["image"])
 Category = response.css("div.articleNameHeader.css-t1z1wj > a > span::text").getall()
 Product name = response.css("div.articleNameHeader.css-t1z1wj > h1::text").getall()
+Price = from product_url API (response["product"]["article"]["price"]["current"]["withTax"])
 Available size = response.css("div.test-sizeSelector > ul button::text").getall()
 Sense of fit = response.css("span.test-marker").get()
 Coordinations = from product_url API (response["product"]["article"]["coordinates"])

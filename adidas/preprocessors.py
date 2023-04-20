@@ -24,6 +24,7 @@ def process_product_information(product):
     processed_data = {
         "product_id": product["product_stat"]["article"],
         "product_name": product["product_data"]["name"],
+        "price": product["api_info"]["product"]["article"]["price"]["current"]["withTax"],
         "product_url": product["product_data"]["url"],
         "product_category": product["product_data"]["category"],
         "available_sizes": product["product_data"]["available_sizes"],

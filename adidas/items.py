@@ -12,6 +12,7 @@ class ProductCore(BaseModel):
 class ProductInformation(ProductCore):
     product_id: str
     product_name: str
+    price: float
     product_url: HttpUrl
     product_category: str
     available_sizes: str
@@ -28,6 +29,10 @@ class ProductInformation(ProductCore):
     appropriation_of_length_rate: Union[float, None] = None
     material_quality_rate: Union[float, None] = None
     comfort_rate: Union[float, None] = None
+
+    @validator("price", pre=True)
+    def extract_price(cls, v):
+        return float(v.replace(",", ""))
 
     @validator("available_sizes", pre=True)
     def stringify_available_sizes(cls, v):

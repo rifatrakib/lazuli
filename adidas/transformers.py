@@ -1,4 +1,4 @@
-# from datetime import datetime
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -9,7 +9,7 @@ from openpyxl.utils import get_column_letter
 
 def hyperlink_columns(name):
     data = {
-        "product-information": [2],
+        "product-information": [3],
         "product-coordinates": [5, 6],
         "product-sizes": [],
         "product-technologies": [4],
@@ -23,6 +23,7 @@ def column_width_definitions(name):
         "product-information": [
             11,
             31,
+            12,
             22,
             19.29,
             22.29,
@@ -105,10 +106,10 @@ def format_column_headers(writer, sheet_name: str):
 
 
 def generate_product_spreadsheet():
-    # current_date = datetime.utcnow().date().isoformat()
+    current_date = datetime.utcnow().date().isoformat()
     destination = "data/spreadsheets"
     Path(destination).mkdir(parents=True, exist_ok=True)
-    writer = pd.ExcelWriter(f"{destination}/2023-04-19.xlsx", engine="openpyxl")
+    writer = pd.ExcelWriter(f"{destination}/{current_date}.xlsx", engine="openpyxl")
 
     sheets = {
         "product-information": "Product Information",
@@ -119,7 +120,7 @@ def generate_product_spreadsheet():
     }
 
     for filename, sheet_name in sheets.items():
-        source = f"data/jsonlines/2023-04-19/{filename}.jl"
+        source = f"data/jsonlines/{current_date}/{filename}.jl"
         df = pd.read_json(source, lines=True)
         df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=2, startcol=1)
 
