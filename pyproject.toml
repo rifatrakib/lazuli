@@ -13,6 +13,7 @@ pandas = "^2.0.0"
 openpyxl = "^3.1.2"
 jinja2 = "^3.1.2"
 pydash = "^7.0.1"
+typer = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.2.2"
