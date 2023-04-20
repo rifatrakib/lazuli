@@ -1,4 +1,6 @@
+import shutil
 import subprocess
+from pathlib import Path
 from typing import Union
 
 from typer import Typer
@@ -20,7 +22,14 @@ def run_spider(limit: Union[int, None] = None):
 
 @app.command(name="clean")
 def clean_slate():
-    pass
+    ack = input("This is a destructive operation. Yes to continue, Ctrl+C to cancel: ")
+    if ack.lower() == "yes":
+        try:
+            Path("./records.log").unlink()
+            directory_path = Path("./data")
+            shutil.rmtree(directory_path)
+        except Exception:
+            print("Nothing to clean up.")
 
 
 if __name__ == "__main__":
