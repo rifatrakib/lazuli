@@ -41,7 +41,7 @@ class ProductsSpider(scrapy.Spider):
                 callback=self.parse_links,
             )
             self.queued_count += 120
-        elif "canonical_param_next" in data and self.count < self.queued_count:
+        elif "canonical_param_next" in data and self.queued_count < self.limit:
             endpoint = data["canonical_param_next"].replace("item/", "list")
             yield scrapy.Request(
                 f"{self.catalogue_url_base}/{endpoint}",
