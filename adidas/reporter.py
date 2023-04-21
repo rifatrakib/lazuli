@@ -75,7 +75,7 @@ def save_report(fig):
     fig.savefig(f"{location}/latest.png")
 
 
-def create_dashboard():
+def create_dashboard(save: bool = True):
     df = load_data()
     kpis = get_kpis(df)
     ts = create_timeseries(df)
@@ -92,5 +92,8 @@ def create_dashboard():
     ax.set_title("Total bytes in per second", color="#243119", fontsize=16, fontweight="bold")
 
     fig.suptitle("Scraper Performance Report", color="#243119", fontsize=36, fontweight="bold")
-    save_report(fig)
+
+    if save:
+        save_report(fig)
+
     plt.show()

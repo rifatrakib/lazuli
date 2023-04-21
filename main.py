@@ -8,13 +8,14 @@ from typing import Union
 from typer import Typer
 
 from adidas.email import send_email
+from adidas.reporter import create_dashboard
 from adidas.utils import create_directory
 
 app = Typer()
 
 
 @app.command(name="run")
-def run_spider(limit: Union[int, None] = None, mail_on_finish: bool = False):
+def run_spider(limit: Union[int, None] = None, create_viz: bool = False, mail_on_finish: bool = False):
     location = create_directory("data/logs", "log")
     command = "scrapy crawl products"
     if limit:
@@ -27,6 +28,8 @@ def run_spider(limit: Union[int, None] = None, mail_on_finish: bool = False):
     finally:
         if mail_on_finish:
             send_email(subject="Completion of Scraper Task")
+        if create_viz:
+            create_dashboard()
 
 
 @app.command(name="clean")
@@ -45,6 +48,11 @@ def clean_slate(backup: bool = False):
             shutil.rmtree(directory_path)
         except Exception:
             print("Nothing to clean up.")
+
+
+@app.command(name="dashboard")
+def latest_dashboard(save: bool = False):
+    create_dashboard(save)
 
 
 @app.command(name="report")
