@@ -108,7 +108,7 @@ class AdidasDownloaderMiddleware:
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
         response.headers["request_sent"] = request.headers["request_sent"]
-        response.headers["response_received"] = datetime.utcnow().isoformat()
+        response.headers["response_received"] = datetime.now().isoformat()
 
         # Must either;
         # - return a Response object
