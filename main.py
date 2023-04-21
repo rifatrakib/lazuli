@@ -5,11 +5,13 @@ from typing import Union
 
 from typer import Typer
 
+from adidas.email import send_email
+
 app = Typer()
 
 
 @app.command(name="run")
-def run_spider(limit: Union[int, None] = None):
+def run_spider(limit: Union[int, None] = None, mail_on_finish: bool = False):
     command = "scrapy crawl products"
     if limit:
         command = f"{command} -a limit={limit}"
@@ -18,6 +20,9 @@ def run_spider(limit: Union[int, None] = None):
         subprocess.run(f"{command} 2>&1 | tee records.log", shell=True)
     except Exception:
         subprocess.run(f"{command}", shell=True)
+    finally:
+        if mail_on_finish:
+            send_email()
 
 
 @app.command(name="clean")
@@ -30,6 +35,11 @@ def clean_slate():
             shutil.rmtree(directory_path)
         except Exception:
             print("Nothing to clean up.")
+
+
+@app.command(name="report")
+def manual_report():
+    send_email()
 
 
 if __name__ == "__main__":
