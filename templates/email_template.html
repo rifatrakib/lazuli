@@ -1,79 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Completion of Scraper Task</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraper Task Completed Successfully</title>
     <style>
-        /* Define CSS styles for the email */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
         }
 
         .container {
             max-width: 600px;
-            margin: auto;
+            margin: 0 auto;
             padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0px 2px 10px #bfbfbf;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
         }
 
         h1 {
-            color: #333333;
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-align: center;
-            text-transform: uppercase;
+            font-size: 24px;
+            margin-top: 0;
         }
 
         p {
-            color: #666666;
-            font-size: 18px;
-            line-height: 1.5;
-            margin: 0;
-            text-align: justify;
-        }
-
-        .greeting {
-            color: #333333;
-            font-size: 20px;
-            font-weight: bold;
             margin-bottom: 20px;
         }
 
-        .signature {
-            color: #333333;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 30px;
-            text-align: right;
-            text-transform: uppercase;
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
         }
 
-        .signature-name {
-            display: block;
-            margin-top: 5px;
+        li {
+            margin-bottom: 10px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .important {
+            font-weight: bold;
+            color: #337ab7;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Completion of Scraper Task</h1>
-        <p class="greeting">Dear {{ recipient_name }},</p>
-        <p>I am writing to inform you that the scraper task assigned to me has been completed successfully. The scraper
-            script was executed and processed data without any errors or issues.</p>
-        <p>The data that was scraped has been processed and the output is attached to this email for your review. The
-            data is in a structured format that can be easily analyzed and used to make informed decisions.</p>
-        <p>I believe that the scraper script and the output data demonstrate my ability to design and implement
-            efficient and effective solutions to complex problems. I am confident that my skills and experience make me
-            a strong candidate for any technical roles at your organization.</p>
-        <p>Please let me know if you have any questions or need any further information. Thank you for your time and
-            consideration.</p>
-        <p class="signature">Best regards,<span class="signature-name">{{ sender_name }}</span></p>
+        <h1>Scraper Task Completed Successfully</h1>
+        <p>Dear {{ recipient_name }},</p>
+        <p>I wanted to let you know that the scraper task to collect product information from Men's section at <a
+                href="https://shop.adidas.jp/item/?gender=mens">Adidas</a> has been completed successfully at {{
+            finish_time }}. The data
+            has been processed and is ready for your review.</p>
+        <ul>
+            <li><span class="important">Number of pages scraped:</span> {{ item_scraped_count }}</li>
+            <li><span class="important">Time elapsed:</span> {{ elapsed_time_seconds }} seconds</li>
+            <li><span class="important">Total size of network out:</span> {{ request_bytes }} bytes</li>
+            <li><span class="important">Total size of scraped data:</span> {{ response_bytes }} bytes</li>
+            <li>Number of requests made: {{ request_count }}</li>
+            <li>Number of successful responses: {{ success_count }}</li>
+            <li>Number of errors: {{ error_count }}</li>
+        </ul>
+        <p>If you need more detailed information about the scraping process, please let me know and I'll be happy to
+            provide it.</p>
+        <p>Thank you for the opportunity to work on this task. I look forward to hearing from you soon.</p>
+        <p>Best regards,</p>
+        <p>{{ sender_name }}</p>
+        <div class="footer">
+            <p>This email was generated automatically by the scraper script.</p>
+        </div>
     </div>
 </body>
 

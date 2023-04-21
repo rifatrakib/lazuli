@@ -1,3 +1,4 @@
+import json
 import smtplib
 from datetime import datetime
 from email.mime.application import MIMEApplication
@@ -12,6 +13,24 @@ from adidas import settings
 env = Environment(loader=FileSystemLoader("./templates"))
 
 
+def read_stats():
+    current_date = datetime.now().date().isoformat()
+    location = f"data/stats/{current_date}"
+    with open(f"{location}/latest.json", "r") as reader:
+        stats = json.loads(reader.read())
+
+    return {
+        "finish_time": stats["finish_time"],
+        "item_scraped_count": stats["item_scraped_count"],
+        "elapsed_time_seconds": stats["elapsed_time_seconds"],
+        "request_bytes": stats["downloader/request_bytes"],
+        "response_bytes": stats["downloader/response_bytes"],
+        "request_count": stats["downloader/request_count"],
+        "success_count": stats["downloader/response_status_count/200"],
+        "error_count": stats["downloader/request_count"] - stats["downloader/response_status_count/200"],
+    }
+
+
 def send_email(subject: str):
     current_date = datetime.now().date().isoformat()
     template = env.get_template("email_template.html")
@@ -20,6 +39,7 @@ def send_email(subject: str):
     email_body = template.render(
         recipient_name=settings.RECIPIENT_NAME,
         sender_name="Adidas Scraper",
+        **read_stats(),
     )
 
     # Set up the email message
