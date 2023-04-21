@@ -120,3 +120,12 @@ Secondly, Scrapy only requests the HTML content of a web page or a particular AP
 Lastly, Scrapy's robust fault tolerance and flexible crawling make it a more reliable and efficient option for web scraping compared to lighter HTTP client packages like Requests. Scrapy provides a flexible mechanism for defining how to follow links and extract data from web pages, automatic throttling and prioritization features, and a robust system of middlewares and extensions that allow developers to customize and extend the core functionality.
 
 Overall, Scrapy is a powerful, fault-tolerant, and flexible web scraping framework that provides a wide range of features and functionality for building scalable and robust web crawlers.
+
+
+### Answer to more "Why's"
+
+* `Why JSONLines over JSON?` - Although using JSON is almost a standard in many cases, it still has some drawbacks in this particular use case. Appending to JSON files is not good for performance in Python. This might be overlooked when the file size is small, but as the scraper continues to collect data, the file size will grow over time, and it becomes very slow. However, JSONLines format address this issue by storing a single record in each line (which themselves are valid JSON strings) and as we keep on scraping, we can just keep appending to it without any performance issue.
+
+* `Why an additional data format in the middle`: Though it is possible to directly store the data in spreadsheets, again, it is not going to be very performant to do this kind of operation in the long run. But saving the data first in JSONLines, then using the features from `pandas` is much more performant as the package itself has dedicated support for tasks like this and it does them faster. It's also safer to keep a middle man (JSONLine records) as backup in case something goes wrong.
+
+* `Why scrape JS?` - In my investigation and trials, I have found it to be hundreds of times faster to get the data directly from JavaScript responses instead of using something like Selenium or Playwright. For this project, I was able to pinpoint the JavaScript generated materials which could be retrieved from one of the API endpoints. This allowed me to get the data from JavaScript directly, get the HTML string from it, and then parsing it to get the necessary data. This not only did increase performace and speed by a very large margin, but also saved a large amount of bandwidth.
