@@ -37,15 +37,15 @@ ROBOTSTXT_OBEY = True
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-# SPIDER_MIDDLEWARES = {
-#    "adidas.middlewares.AdidasSpiderMiddleware": 543,
-# }
+SPIDER_MIDDLEWARES = {
+    "adidas.middlewares.AdidasSpiderMiddleware": 543,
+}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    "adidas.middlewares.AdidasDownloaderMiddleware": 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    "adidas.middlewares.AdidasDownloaderMiddleware": 543,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
@@ -85,8 +85,8 @@ REQUEST_FINGERPRINTER_IMPLEMENTATION = "2.7"
 TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
-ADMIN_EMAIL = config("ADMIN_EMAIL")
-ADMIN_PASSWORD = config("ADMIN_PASSWORD")
+ADMIN_EMAIL = config("ADMIN_EMAIL", default=None)
+ADMIN_PASSWORD = config("ADMIN_PASSWORD", default=None)
 
-RECIPIENT_NAME = config("RECIPIENT_NAME")
-RECIPIENT_EMAIL = config("RECIPIENT_EMAIL")
+RECIPIENT_NAME = config("RECIPIENT_NAME", default=None)
+RECIPIENT_EMAIL = config("RECIPIENT_EMAIL", default=None)

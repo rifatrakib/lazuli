@@ -1,9 +1,8 @@
-# Define here the models for your spider middleware
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
 
-# useful for handling different item types with a single interface
 from scrapy import signals
 
 
@@ -22,6 +21,22 @@ class AdidasSpiderMiddleware:
     def process_spider_input(self, response, spider):
         # Called for each response that goes through the spider
         # middleware and into the spider.
+        scraping_date = datetime.now().date().isoformat()
+        location = f"data/dashboard/{scraping_date}"
+
+        if response.status == 200:
+            with open(f"{location}/latest.jl", "a", encoding="utf-8") as writer:
+                writer.write(
+                    json.dumps(
+                        {
+                            "url": response.url,
+                            "sent_at": response.headers["request_sent"].decode("utf-8"),
+                            "received_at": response.headers["response_received"].decode("utf-8"),
+                            "response_size": sys.getsizeof(response.body),
+                        }
+                    )
+                )
+                writer.write("\n")
 
         # Should return None or raise an exception.
         return None
@@ -53,6 +68,17 @@ class AdidasSpiderMiddleware:
     def spider_opened(self, spider):
         spider.logger.info("Spider opened: %s" % spider.name)
 
+        scraping_date = datetime.now().date().isoformat()
+        location = f"data/dashboard/{scraping_date}"
+        Path(location).mkdir(parents=True, exist_ok=True)
+
+        version = len([file for file in Path(location).glob("*") if file.is_file()])
+
+        if version:
+            current_latest_version = Path(f"{location}/latest.jl")
+            renamed_file = Path(f"{location}/version-{version}.jl")
+            current_latest_version.rename(renamed_file)
+
 
 class AdidasDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
@@ -69,6 +95,7 @@ class AdidasDownloaderMiddleware:
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
         # middleware.
+        request.headers["request_sent"] = datetime.now().isoformat()
 
         # Must either:
         # - return None: continue processing this request
@@ -80,6 +107,8 @@ class AdidasDownloaderMiddleware:
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
+        response.headers["request_sent"] = request.headers["request_sent"]
+        response.headers["response_received"] = datetime.now().isoformat()
 
         # Must either;
         # - return a Response object

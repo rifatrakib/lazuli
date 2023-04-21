@@ -1,10 +1,11 @@
 from datetime import datetime
-from pathlib import Path
 
 import pandas as pd
 import pydash
 from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl.utils import get_column_letter
+
+from adidas.utils import create_directory
 
 
 def hyperlink_columns(name):
@@ -99,7 +100,7 @@ def format_column_headers(writer, sheet_name: str):
     header_alignment = Alignment(horizontal="left")
     header_border = Border(bottom=Side(border_style="medium", color="002060"))
 
-    for col_idx, column in enumerate(worksheet.columns):
+    for col_idx, _ in enumerate(worksheet.columns):
         if col_idx == 0:
             continue
 
@@ -119,16 +120,8 @@ def create_contents_table_data(sheets):
 
 
 def generate_product_spreadsheet():
+    destination = create_directory("data/spreadsheets", "xlsx")
     current_date = datetime.now().date().isoformat()
-    destination = f"data/spreadsheets/{current_date}"
-    Path(destination).mkdir(parents=True, exist_ok=True)
-
-    version = len([file for file in Path(destination).glob("*") if file.is_file()])
-    if version:
-        current_latest_version = Path(f"{destination}/latest.xlsx")
-        renamed_file = Path(f"{destination}/version-{version}.xlsx")
-        current_latest_version.rename(renamed_file)
-
     writer = pd.ExcelWriter(f"{destination}/latest.xlsx", engine="openpyxl")
 
     sheets = {

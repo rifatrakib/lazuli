@@ -1,6 +1,4 @@
 import json
-from datetime import datetime
-from pathlib import Path
 
 from itemadapter import ItemAdapter
 from scrapy import signals
@@ -13,6 +11,7 @@ from adidas.preprocessors import (
     process_product_technologies,
 )
 from adidas.transformers import generate_product_spreadsheet
+from adidas.utils import create_directory
 
 
 class AdidasPipeline:
@@ -24,48 +23,26 @@ class AdidasPipeline:
         return pipeline
 
     def spider_opened(self, spider):
-        scraping_date = datetime.now().date().isoformat()
-        location = f"data/jsonlines/{scraping_date}"
-        Path(location).mkdir(parents=True, exist_ok=True)
-
-        version = len([file for file in Path(location).glob("*") if file.is_file()]) // 5
-
-        if version:
-            current_latest_version = Path(f"{location}/product-information-latest.jl")
-            renamed_file = Path(f"{location}/product-information-version-{version}.jl")
-            current_latest_version.rename(renamed_file)
+        prefixes = [
+            "product-information",
+            "product-coordinates",
+            "product-sizes",
+            "product-technologies",
+            "product-reviews",
+        ]
+        location = create_directory("data/jsonlines", "jl", prefixes)
 
         self.product_information_filename = "product-information-latest.jl"
         self.product_information_file = open(f"{location}/{self.product_information_filename}", "w", encoding="utf-8")
 
-        if version:
-            current_latest_version = Path(f"{location}/product-coordinates-latest.jl")
-            renamed_file = Path(f"{location}/product-coordinates-version-{version}.jl")
-            current_latest_version.rename(renamed_file)
-
         self.product_coordinates_filename = "product-coordinates-latest.jl"
         self.product_coordinates_file = open(f"{location}/{self.product_coordinates_filename}", "w", encoding="utf-8")
-
-        if version:
-            current_latest_version = Path(f"{location}/product-sizes-latest.jl")
-            renamed_file = Path(f"{location}/product-sizes-version-{version}.jl")
-            current_latest_version.rename(renamed_file)
 
         self.product_size_filename = "product-sizes-latest.jl"
         self.product_size_file = open(f"{location}/{self.product_size_filename}", "w", encoding="utf-8")
 
-        if version:
-            current_latest_version = Path(f"{location}/product-technologies-latest.jl")
-            renamed_file = Path(f"{location}/product-technologies-version-{version}.jl")
-            current_latest_version.rename(renamed_file)
-
         self.product_technology_filename = "product-technologies-latest.jl"
         self.product_technology_file = open(f"{location}/{self.product_technology_filename}", "w", encoding="utf-8")
-
-        if version:
-            current_latest_version = Path(f"{location}/product-reviews-latest.jl")
-            renamed_file = Path(f"{location}/product-reviews-version-{version}.jl")
-            current_latest_version.rename(renamed_file)
 
         self.product_review_filename = "product-reviews-latest.jl"
         self.product_review_file = open(f"{location}/{self.product_review_filename}", "w", encoding="utf-8")

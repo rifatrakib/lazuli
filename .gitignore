@@ -129,5 +129,6 @@ dmypy.json
 .pyre/
 
 # data directory
+archive/*
 data/*
 *.json
