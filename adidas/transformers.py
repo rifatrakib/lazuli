@@ -119,10 +119,17 @@ def create_contents_table_data(sheets):
 
 
 def generate_product_spreadsheet():
-    current_date = datetime.utcnow().date().isoformat()
-    destination = "data/spreadsheets"
+    current_date = datetime.now().date().isoformat()
+    destination = f"data/spreadsheets/{current_date}"
     Path(destination).mkdir(parents=True, exist_ok=True)
-    writer = pd.ExcelWriter(f"{destination}/{current_date}.xlsx", engine="openpyxl")
+
+    version = len([file for file in Path(destination).glob("*") if file.is_file()])
+    if version:
+        current_latest_version = Path(f"{destination}/latest.xlsx")
+        renamed_file = Path(f"{destination}/version-{version}.xlsx")
+        current_latest_version.rename(renamed_file)
+
+    writer = pd.ExcelWriter(f"{destination}/latest.xlsx", engine="openpyxl")
 
     sheets = {
         "table-of-contents": "Table of Contents",
@@ -134,7 +141,7 @@ def generate_product_spreadsheet():
     }
 
     for filename, sheet_name in sheets.items():
-        source = f"data/jsonlines/{current_date}/{filename}.jl"
+        source = f"data/jsonlines/{current_date}/{filename}-latest.jl"
         if filename == "table-of-contents":
             df = create_contents_table_data(sheets)
         else:

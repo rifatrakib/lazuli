@@ -13,7 +13,7 @@ env = Environment(loader=FileSystemLoader("./templates"))
 
 
 def send_email(subject: str):
-    current_date = datetime.utcnow().date().isoformat()
+    current_date = datetime.now().date().isoformat()
     template = env.get_template("email_template.html")
 
     # Render the template with the context variables
@@ -32,7 +32,7 @@ def send_email(subject: str):
     msg.attach(MIMEText(email_body, "html"))
 
     # Attach a file to the email message
-    with open(f"data/spreadsheets/{current_date}.xlsx", "rb") as reader:
+    with open(f"data/spreadsheets/{current_date}/latest.xlsx", "rb") as reader:
         file_data = reader.read()
     attachment = MIMEApplication(file_data, _subtype="xlsx")
     attachment.add_header("Content-Disposition", "attachment", filename="report.xlsx")
