@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from pathlib import Path
 from typing import Union
 from urllib.parse import parse_qs, urlparse
 
@@ -9,6 +8,7 @@ from scrapy.selector import Selector
 from w3lib.html import remove_tags
 
 from adidas.preprocessors import sanitize_size_chart_data
+from adidas.utils import create_directory
 
 
 class ProductsSpider(scrapy.Spider):
@@ -194,17 +194,9 @@ class ProductsSpider(scrapy.Spider):
             yield {**kwargs, "review_data": review_data}
 
     def closed(self, reason):
-        current_date = datetime.now().date().isoformat()
-        location = f"data/stats/{current_date}"
-        Path(location).mkdir(parents=True, exist_ok=True)
-
-        version = len([file for file in Path(location).glob("*") if file.is_file()])
-        if version:
-            current_latest_version = Path(f"{location}/latest.json")
-            renamed_file = Path(f"{location}/version-{version}.json")
-            current_latest_version.rename(renamed_file)
-
+        location = create_directory("data/stats", "json")
         stats = self.crawler.stats.get_stats()
+
         for key, value in stats.items():
             if isinstance(value, datetime):
                 stats[key] = value.isoformat()

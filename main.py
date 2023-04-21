@@ -2,29 +2,20 @@ import os
 import shutil
 import subprocess
 import zipfile
-from datetime import datetime
 from pathlib import Path
 from typing import Union
 
 from typer import Typer
 
 from adidas.email import send_email
+from adidas.utils import create_directory
 
 app = Typer()
 
 
 @app.command(name="run")
 def run_spider(limit: Union[int, None] = None, mail_on_finish: bool = False):
-    current_date = datetime.now().date().isoformat()
-    location = f"data/logs/{current_date}"
-    Path(location).mkdir(parents=True, exist_ok=True)
-
-    version = len([file for file in Path(location).glob("*") if file.is_file()])
-    if version:
-        current_latest_version = Path(f"{location}/latest.log")
-        renamed_file = Path(f"{location}/version-{version}.log")
-        current_latest_version.rename(renamed_file)
-
+    location = create_directory("data/logs", "log")
     command = "scrapy crawl products"
     if limit:
         command = f"{command} -a limit={limit}"
@@ -44,16 +35,7 @@ def clean_slate(backup: bool = False):
     if ack.lower() == "yes":
         try:
             if backup:
-                current_date = datetime.now().date().isoformat()
-                location = f"archive/{current_date}"
-                Path(location).mkdir(parents=True, exist_ok=True)
-
-                version = len([file for file in Path(location).glob("*") if file.is_file()])
-                if version:
-                    current_latest_version = Path(f"{location}/latest.zip")
-                    renamed_file = Path(f"{location}/version-{version}.zip")
-                    current_latest_version.rename(renamed_file)
-
+                location = create_directory("./archive", "zip")
                 with zipfile.ZipFile(f"{location}/latest.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
                     for root, dirs, files in os.walk("./data"):
                         for file in files:
