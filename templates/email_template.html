@@ -22,15 +22,40 @@
 
         h1 {
             color: #333333;
-            font-size: 24px;
+            font-size: 28px;
+            font-weight: bold;
             margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
         }
 
         p {
             color: #666666;
-            font-size: 16px;
+            font-size: 18px;
             line-height: 1.5;
             margin: 0;
+            text-align: justify;
+        }
+
+        .greeting {
+            color: #333333;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .signature {
+            color: #333333;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 30px;
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        .signature-name {
+            display: block;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -38,7 +63,7 @@
 <body>
     <div class="container">
         <h1>Completion of Scraper Task</h1>
-        <p>Dear {{ recipient_name }},</p>
+        <p class="greeting">Dear {{ recipient_name }},</p>
         <p>I am writing to inform you that the scraper task assigned to me has been completed successfully. The scraper
             script was executed and processed data without any errors or issues.</p>
         <p>The data that was scraped has been processed and the output is attached to this email for your review. The
@@ -48,8 +73,7 @@
             a strong candidate for any technical roles at your organization.</p>
         <p>Please let me know if you have any questions or need any further information. Thank you for your time and
             consideration.</p>
-        <p>Best regards,</p>
-        <p>{{ sender_name }}</p>
+        <p class="signature">Best regards,<span class="signature-name">{{ sender_name }}</span></p>
     </div>
 </body>
 

@@ -22,7 +22,7 @@ def run_spider(limit: Union[int, None] = None, mail_on_finish: bool = False):
         subprocess.run(f"{command}", shell=True)
     finally:
         if mail_on_finish:
-            send_email()
+            send_email(subject="Completion of Scraper Task")
 
 
 @app.command(name="clean")
@@ -39,7 +39,7 @@ def clean_slate():
 
 @app.command(name="report")
 def manual_report():
-    send_email()
+    send_email(subject="Completion of Scraper Task")
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ from adidas.preprocessors import sanitize_size_chart_data
 class ProductsSpider(scrapy.Spider):
     name = "products"
     count = 0
-    in_queue = 0
+    queued_count = 0
     catalogue_url_base = "https://shop.adidas.jp/f/v1/pub/product"
     product_page_base = "https://shop.adidas.jp/products"
     product_api_base = "https://shop.adidas.jp/f/v2/web/pub/products/article"
@@ -38,14 +38,14 @@ class ProductsSpider(scrapy.Spider):
                 f"{self.catalogue_url_base}/{endpoint}",
                 callback=self.parse_links,
             )
-            self.in_queue += 120
-        elif "canonical_param_next" in data and self.count < self.in_queue:
+            self.queued_count += 120
+        elif "canonical_param_next" in data and self.count < self.queued_count:
             endpoint = data["canonical_param_next"].replace("item/", "list")
             yield scrapy.Request(
                 f"{self.catalogue_url_base}/{endpoint}",
                 callback=self.parse_links,
             )
-            self.in_queue += 120
+            self.queued_count += 120
 
         for product_code, information in data["articles"].items():
             if self.limit and self.count >= self.limit:
