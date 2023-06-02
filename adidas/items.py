@@ -59,6 +59,13 @@ class ProductInformation(ProductCore):
         return None
 
 
+class ProductMedia(ProductCore):
+    product_id: str
+    product_name: str
+    type: str
+    url: HttpUrl
+
+
 class CoordinatedProduct(ProductCore):
     main_product_id: str
     main_product_name: str

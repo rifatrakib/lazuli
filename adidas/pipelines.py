@@ -6,6 +6,7 @@ from scrapy import signals
 from adidas.preprocessors import (
     process_product_coordinates,
     process_product_information,
+    process_product_media,
     process_product_reviews,
     process_product_sizes,
     process_product_technologies,
@@ -25,6 +26,7 @@ class AdidasPipeline:
     def spider_opened(self, spider):
         prefixes = [
             "product-information",
+            "product-media",
             "product-coordinates",
             "product-sizes",
             "product-technologies",
@@ -34,6 +36,9 @@ class AdidasPipeline:
 
         self.product_information_filename = "product-information-latest.jl"
         self.product_information_file = open(f"{location}/{self.product_information_filename}", "w", encoding="utf-8")
+
+        self.product_media_filename = "product-media-latest.jl"
+        self.product_media_file = open(f"{location}/{self.product_media_filename}", "w", encoding="utf-8")
 
         self.product_coordinates_filename = "product-coordinates-latest.jl"
         self.product_coordinates_file = open(f"{location}/{self.product_coordinates_filename}", "w", encoding="utf-8")
@@ -49,6 +54,7 @@ class AdidasPipeline:
 
     def spider_closed(self, spider):
         self.product_information_file.close()
+        self.product_media_file.close()
         self.product_coordinates_file.close()
         self.product_size_file.close()
         self.product_technology_file.close()
@@ -61,6 +67,12 @@ class AdidasPipeline:
         product_information = process_product_information(product)
         product_information = json.dumps(product_information, ensure_ascii=False) + "\n"
         self.product_information_file.write(product_information)
+
+        if product["api_info"]["product"]["article"]["image"]:
+            product_media = process_product_media(product)
+            for media_record in product_media:
+                media_record = json.dumps(media_record, ensure_ascii=False) + "\n"
+                self.product_media_file.write(media_record)
 
         if product["api_info"]["product"]["article"]["coordinates"]:
             product_coordinates = process_product_coordinates(product)

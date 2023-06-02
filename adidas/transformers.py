@@ -12,6 +12,7 @@ def hyperlink_columns(name):
     data = {
         "table-of-contents": [1],
         "product-information": [3],
+        "product-media": [3],
         "product-coordinates": [5, 6],
         "product-sizes": [],
         "product-technologies": [4],
@@ -44,6 +45,7 @@ def column_width_definitions(name):
             22.71,
             14.43,
         ],
+        "product-media": [11, 31, 10, 120],
         "product-coordinates": [15.43, 21.43, 30.29, 30.29, 27.86, 22.14, 56.43],
         "product-sizes": [11, 31, 13.5],
         "product-technologies": [11, 31, 19.14, 55, 55],
@@ -127,6 +129,7 @@ def generate_product_spreadsheet():
     sheets = {
         "table-of-contents": "Table of Contents",
         "product-information": "Product Information",
+        "product-media": "Product Media",
         "product-coordinates": "Coordinated Products",
         "product-sizes": "Sizes",
         "product-technologies": "Technologies",

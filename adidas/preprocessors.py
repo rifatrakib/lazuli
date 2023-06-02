@@ -1,4 +1,4 @@
-from adidas.items import CoordinatedProduct, ProductInformation, ProductReview, ProductTechnology
+from adidas.items import CoordinatedProduct, ProductInformation, ProductMedia, ProductReview, ProductTechnology
 
 
 def sanitize_size_chart_data(data):
@@ -47,6 +47,31 @@ def process_product_information(product):
 
     processed_data = ProductInformation(**processed_data)
     return processed_data.dict()
+
+
+def process_product_media(product):
+    result = []
+    for image in product["api_info"]["product"]["article"]["image"]["details"]:
+        result.append(
+            ProductMedia(
+                product_id=product["product_stat"]["article"],
+                product_name=product["product_data"]["name"],
+                type="image",
+                url=f"https://shop.adidas.jp{image['imageUrl']['large']}",
+            ).dict(),
+        )
+
+    for video in product["api_info"]["product"]["article"]["image"]["videos"]:
+        result.append(
+            ProductMedia(
+                product_id=product["product_stat"]["article"],
+                product_name=product["product_data"]["name"],
+                type="video",
+                url=video["movieUrl"],
+            ).dict(),
+        )
+
+    return result
 
 
 def process_product_coordinates(product):
